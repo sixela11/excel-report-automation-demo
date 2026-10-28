@@ -75,6 +75,23 @@ python -m pytest -q
 To use your own files, point `--input` at a folder of `.xlsx` files with these columns (header case and spacing don't matter):
 `invoice_id, invoice_date, customer_id, customer_name, postcode, product_code, quantity, unit_price`
 
+## Interactive demo (Streamlit)
+A plain-English, click-through version for non-technical viewers (`app.py`). It reuses the same `consolidate()` logic as the command-line tool.
+```powershell
+streamlit run app.py
+```
+- Runs only on the bundled synthetic files. There is no upload option, by design.
+- Each run writes to a temporary folder that is deleted at once. The report is held in that visitor's session memory for download only.
+- All figures shown are computed live from the run.
+
+### Deploying to Streamlit Community Cloud (free)
+1. Push this repository to GitHub (public).
+2. Sign in at [share.streamlit.io](https://share.streamlit.io) with GitHub. Choose **Create app**, then the repo, branch `main`, and main file `app.py`.
+3. Under **Advanced settings**, pick the newest Python version offered (3.12 or later). No secrets are needed.
+4. Deploy. Dependencies install from `requirements.txt`.
+
+Free-tier notes (from Streamlit docs, checked Oct 2026): shared resources (roughly 0.7–2.7 GB memory), apps sleep after 12 hours without traffic and wake on the next visit, and limits may change without notice.
+
 ## Deliberate issues in the sample data
 | File | Issue | Handling |
 |---|---|---|
@@ -85,7 +102,7 @@ To use your own files, point `--input` at a folder of `.xlsx` files with these c
 | `sales_2026-06.xlsx` | `quantity` column missing | Whole file rejected, reported |
 
 ## Tests
-11 pytest tests cover leading-zero preservation, ID repair, exact and conflicting duplicates, rejected files, invalid values, messy headers, input immutability, output-folder safety, synthetic-data check and an end-to-end run.
+15 pytest tests cover the Streamlit app (live results and workbook integrity, with no files left behind), leading-zero preservation, ID repair, exact and conflicting duplicates, rejected files, invalid values, messy headers, input immutability, output-folder safety, synthetic-data check and an end-to-end run.
 
 ## Limitations
 - Schema is fixed in code (`REQUIRED_COLUMNS`); a new layout needs a small config change.
@@ -97,7 +114,7 @@ To use your own files, point `--input` at a folder of `.xlsx` files with these c
 - The report file is overwritten on each run (source files never are).
 
 ## Tech
-Python · pandas · openpyxl · tqdm · pytest
+Python · pandas · openpyxl · Streamlit · tqdm · pytest
 
 ## Adapting this for your business
 The same pattern applies to timesheets, job costings, rent rolls, stock counts, CRM exports and supplier price lists. See [docs/case-study.md](docs/case-study.md).
